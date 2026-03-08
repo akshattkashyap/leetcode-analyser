@@ -1,0 +1,197 @@
+/* ============================================
+   LeetCode Analyzer — Injected Styles
+   Purple accent (#a855f7) on dark (#1a1a2e)
+   All classes prefixed with lc-analyzer-
+   ============================================ */
+
+/* ----- Badge Row ----- */
+.lc-analyzer-badges {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0 8px 0;
+  padding: 0 16px;
+}
+
+.lc-analyzer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 14px;
+  border: 1.5px solid #a855f7;
+  border-radius: 999px;
+  color: #a855f7;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  letter-spacing: 0.3px;
+}
+
+/* ----- Congratulations ----- */
+.lc-analyzer-congrats {
+  color: #a855f7;
+  font-style: italic;
+  font-size: 13px;
+  padding: 6px 16px 4px 16px;
+  line-height: 1.5;
+}
+
+/* ----- Divider ----- */
+.lc-analyzer-divider {
+  border: none;
+  border-top: 1px solid rgba(168, 85, 247, 0.25);
+  margin: 10px 16px;
+}
+
+/* ----- Section Wrapper (bordered card) ----- */
+.lc-analyzer-section-wrap {
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 10px;
+  padding: 12px 4px;
+  margin: 12px 0;
+  background: rgba(26, 26, 46, 0.5);
+}
+
+/* ----- Section Containers ----- */
+.lc-analyzer-section {
+  padding: 10px 16px 14px 16px;
+  margin: 4px 0;
+}
+
+.lc-analyzer-section-heading {
+  color: #a855f7;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
+}
+
+/* ----- Rows inside sections ----- */
+.lc-analyzer-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #d1d5db;
+  line-height: 1.6;
+}
+
+.lc-analyzer-row-label {
+  color: #9ca3af;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.lc-analyzer-row-value {
+  color: #d1d5db;
+}
+
+/* Tags (links-style purple text separated by /) */
+.lc-analyzer-tag {
+  color: #a855f7;
+  font-weight: 500;
+  cursor: default;
+}
+
+.lc-analyzer-tag-separator {
+  color: #6b7280;
+  margin: 0 2px;
+}
+
+/* Complexity styling */
+.lc-analyzer-complexity {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.lc-analyzer-complexity-current {
+  color: #d1d5db;
+}
+
+.lc-analyzer-complexity-suggested {
+  color: #a855f7;
+}
+
+/* Star rating */
+.lc-analyzer-stars {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #a855f7;
+}
+
+/* Purple suggestion text */
+.lc-analyzer-suggestion-purple {
+  color: #a855f7;
+}
+
+/* ----- Loading Spinner ----- */
+.lc-analyzer-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #a855f7;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.lc-analyzer-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  border-top-color: #a855f7;
+  border-radius: 50%;
+  animation: lc-analyzer-spin 0.7s linear infinite;
+}
+
+@keyframes lc-analyzer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ----- Error Message ----- */
+.lc-analyzer-error {
+  color: #ef4444;
+  font-size: 13px;
+  padding: 8px 16px;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 6px;
+  margin: 8px 16px;
+}
+
+/* ----- Analysis Button ----- */
+.lc-analyzer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: transparent;
+  border: 1.5px solid #a855f7;
+  border-radius: 6px;
+  color: #a855f7;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  margin-left: 8px;
+  font-family: inherit;
+}
+
+.lc-analyzer-btn:hover {
+  background: rgba(168, 85, 247, 0.12);
+}
+
+.lc-analyzer-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lc-analyzer-btn.lc-analyzer-btn-active {
+  background: #a855f7;
+  color: #fff;
+}
