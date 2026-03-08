@@ -10,16 +10,49 @@
   function init() {
     if (!isSubmissionPage()) return;
     waitForSubmissionContent(() => {
+      hideNativeAnalysis();
       injectAnalysisButton();
       observeReRenders();
     });
+  }
+
+  // ─── Hide LeetCode's native Analysis button/tab ───
+  // ONLY target tab headers (flexlayout__tabset) and specific buttons.
+  // NEVER target divs inside flexlayout__tab (content panels).
+  function hideNativeAnalysis() {
+    // 1. Hide "Analysis" tab in the tab header bar
+    const tabsets = document.querySelectorAll(".flexlayout__tabset");
+    for (const tabset of tabsets) {
+      // Only look at direct tab button elements, not deep content
+      const tabButtons = tabset.querySelectorAll(
+        '[class*="flexlayout__tab_button"], [role="tab"]',
+      );
+      for (const btn of tabButtons) {
+        const text = btn.textContent.trim();
+        if (text === "Analysis" || text === "✦ Analysis") {
+          btn.style.display = "none";
+        }
+      }
+    }
+
+    // 2. Hide native Analysis buttons/links inside the submission panel
+    const panel = getSubmissionPanel();
+    if (!panel) return;
+    const buttons = panel.querySelectorAll("button, a");
+    for (const btn of buttons) {
+      if (btn.classList.contains(`${ANALYZER_PREFIX}btn`)) continue;
+      const text = btn.textContent.trim();
+      if (text === "Analysis" || text === "✦ Analysis") {
+        btn.style.display = "none";
+      }
+    }
   }
 
   function isSubmissionPage() {
     return /\/problems\/[^/]+\/submissions\/\d+/.test(window.location.pathname);
   }
 
-  // ─── Wait for LeetCode SPA to fully render the submission result ───
+  // ─── Wait for LeetCode SPA to fully render ───
   function waitForSubmissionContent(callback, maxWait = 20000) {
     const check = () => getSubmissionPanel() !== null;
     if (check()) return callback();
@@ -34,108 +67,93 @@
     setTimeout(() => observer.disconnect(), maxWait);
   }
 
-  // ─── Find the left submission panel (the scrollable container) ───
+  // ─── Find the left submission panel ───
+  // The panel is: flexlayout__tab > div > div.overflow-y-auto > div.mx-auto
+  // We target the "mx-auto" content container directly.
   function getSubmissionPanel() {
-    const resultEl =
-      document.querySelector('[data-e2e-locator="submission-result"]') ||
-      findResultElement();
+    // Strategy: find the "overflow-y-auto" scrollable container inside flexlayout
+    const scrollContainers = document.querySelectorAll(".overflow-y-auto");
+    for (const container of scrollContainers) {
+      // Check it's inside a flexlayout__tab
+      const tab = container.closest(".flexlayout__tab");
+      if (!tab) continue;
 
-    if (!resultEl) return null;
-
-    let node = resultEl.parentElement;
-    while (node && node !== document.body) {
-      const style = window.getComputedStyle(node);
-      if (style.overflowY === "auto" || style.overflowY === "scroll") {
-        return node;
-      }
-      node = node.parentElement;
-    }
-    return null;
-  }
-
-  function findResultElement() {
-    const candidates = document.querySelectorAll("span, div");
-    for (const el of candidates) {
-      const text = el.textContent.trim();
+      // Check it contains submission result text
+      const text = container.textContent || "";
       if (
-        el.childElementCount <= 2 &&
-        (text.startsWith("Accepted") ||
-          text.startsWith("Wrong Answer") ||
-          text.startsWith("Time Limit Exceeded") ||
-          text.startsWith("Runtime Error"))
+        text.includes("Accepted") ||
+        text.includes("Wrong Answer") ||
+        text.includes("Time Limit Exceeded") ||
+        text.includes("Runtime Error") ||
+        text.includes("Memory Limit Exceeded") ||
+        text.includes("Compile Error")
       ) {
-        return el;
+        return container;
       }
     }
     return null;
   }
 
   /**
-   * Get the "content wrapper" — the element whose direct children are the
-   * major visual sections (header, runtime, code, notes, etc).
-   * This is either the panel itself or its first child (LeetCode often wraps
-   * the scrollable content in a single div).
+   * Get the content wrapper inside the scroll panel.
+   * Structure: overflow-y-auto > div.mx-auto.max-w-[700px].flex-col.gap-4
    */
   function getContentWrapper(panel) {
-    // If the panel has very few direct children (1-2), the real content is likely
-    // inside the first child. If it has many children, the panel IS the wrapper.
-    const directDivChildren = Array.from(panel.children).filter(
-      (c) => c.tagName === "DIV",
-    );
+    // The mx-auto wrapper is the first (and usually only) child
+    const mxAuto = panel.querySelector('[class*="mx-auto"]');
+    if (mxAuto) return mxAuto;
 
-    if (directDivChildren.length === 1) {
-      // Check if that single child has many children (the actual sections)
-      const inner = directDivChildren[0];
-      const innerChildren = Array.from(inner.children).filter(
-        (c) => c.tagName === "DIV",
-      );
-      if (innerChildren.length >= 3) return inner;
-    }
-
-    return panel;
+    // Fallback: first div child
+    const firstChild = panel.querySelector(":scope > div");
+    return firstChild || panel;
   }
 
   /**
-   * Walk the direct children of the content wrapper and classify them
-   * into the major sections we care about.
+   * Find runtime/memory block and code block within the wrapper's tree.
+   * Searches ALL children of the wrapper (not just the first) since the
+   * DOM structure can differ between accepted and failed submissions.
    */
-  function findSectionChildren(wrapper) {
-    const children = Array.from(wrapper.children);
+  function findLandmarks(wrapper) {
     let runtimeBlock = null;
     let codeBlock = null;
 
-    for (const child of children) {
-      // Skip our own injected elements
-      if (
-        child.className &&
-        child.className.toString().includes(ANALYZER_PREFIX)
-      )
-        continue;
+    const walkChildren = (parent, depth) => {
+      if (depth > 3) return;
+      for (const child of parent.children) {
+        if (child.className?.toString().includes(ANALYZER_PREFIX)) continue;
+        const text = child.textContent || "";
 
-      const text = child.textContent || "";
+        // Runtime/Memory block
+        if (
+          !runtimeBlock &&
+          text.includes("Runtime") &&
+          text.includes("Memory") &&
+          (text.includes("ms") || text.includes("MB")) &&
+          text.includes("Beats")
+        ) {
+          runtimeBlock = child;
+          continue;
+        }
 
-      // Runtime/Memory block: contains both "Runtime" and "Memory" with units
-      if (
-        !runtimeBlock &&
-        text.includes("Runtime") &&
-        text.includes("Memory") &&
-        (text.includes("ms") || text.includes("MB"))
-      ) {
-        runtimeBlock = child;
-        continue;
+        // Code block — first text starts with "Code"
+        if (!codeBlock) {
+          const firstEl = child.querySelector(":scope > div, :scope > span");
+          const firstText = firstEl ? firstEl.textContent.trim() : "";
+          if (firstText.startsWith("Code")) {
+            codeBlock = child;
+            continue;
+          }
+        }
+
+        // Recurse deeper if we haven't found both yet
+        if (!runtimeBlock || !codeBlock) {
+          walkChildren(child, depth + 1);
+        }
       }
+    };
 
-      // Code block: starts with "Code" and contains code content
-      // Must come after the runtime block in DOM order
-      if (
-        !codeBlock &&
-        runtimeBlock &&
-        (text.startsWith("Code") || child.querySelector("code, pre"))
-      ) {
-        codeBlock = child;
-        continue;
-      }
-    }
+    // Walk ALL children of the wrapper
+    walkChildren(wrapper, 0);
 
     return { runtimeBlock, codeBlock };
   }
@@ -144,6 +162,7 @@
   function observeReRenders() {
     const observer = new MutationObserver(() => {
       if (!isSubmissionPage()) return;
+      hideNativeAnalysis();
       if (!document.querySelector(`.${ANALYZER_PREFIX}btn`)) {
         injectAnalysisButton();
       }
@@ -184,7 +203,6 @@
   }
 
   function scrapeCode() {
-    // Monaco editor
     const monacoLines = document.querySelectorAll(".view-lines .view-line");
     if (monacoLines.length > 0) {
       return Array.from(monacoLines)
@@ -192,7 +210,6 @@
         .join("\n");
     }
 
-    // Code block in left panel
     const panel = getSubmissionPanel();
     if (panel) {
       const codeBlock = panel.querySelector("code, pre code");
@@ -227,26 +244,32 @@
     const panel = getSubmissionPanel();
     if (!panel) return null;
 
-    // Look for the "Solution" button/link inside the panel
+    // Look for Solution / Editorial button
     const links = panel.querySelectorAll("a, button");
     for (const link of links) {
       const text = link.textContent.trim();
-      if (text === "Solution" || text === "Solutions") {
+      if (text === "Solution" || text === "Solutions" || text === "Editorial") {
         const parent = link.closest("div");
         if (parent) return parent;
       }
     }
 
-    // Fallback: find the submission result header row
-    const resultEl =
-      panel.querySelector('[data-e2e-locator="submission-result"]') ||
-      findResultElement();
-
-    if (resultEl) {
-      let container = resultEl.parentElement;
-      for (let i = 0; i < 4 && container; i++) {
-        if (container.children.length >= 2) return container;
-        container = container.parentElement;
+    // Fallback: find submission result header
+    const allSpans = panel.querySelectorAll("span, div");
+    for (const el of allSpans) {
+      const text = el.textContent.trim();
+      if (
+        (text.startsWith("Accepted") ||
+          text.startsWith("Wrong Answer") ||
+          text.startsWith("Time Limit") ||
+          text.startsWith("Runtime Error")) &&
+        el.childElementCount <= 3
+      ) {
+        let container = el.parentElement;
+        for (let i = 0; i < 4 && container; i++) {
+          if (container.children.length >= 2) return container;
+          container = container.parentElement;
+        }
       }
     }
 
@@ -325,12 +348,7 @@
     errorEl.textContent = `⚠ ${message}`;
 
     const wrapper = getContentWrapper(panel);
-    const { runtimeBlock } = findSectionChildren(wrapper);
-    if (runtimeBlock) {
-      wrapper.insertBefore(errorEl, runtimeBlock);
-    } else {
-      wrapper.appendChild(errorEl);
-    }
+    wrapper.appendChild(errorEl);
   }
 
   // ─── DOM Injection ───
@@ -343,60 +361,74 @@
     if (!panel) return;
 
     const wrapper = getContentWrapper(panel);
-    const { runtimeBlock, codeBlock } = findSectionChildren(wrapper);
+    const { runtimeBlock, codeBlock } = findLandmarks(wrapper);
 
-    // === BEFORE runtime block: badges + congrats + divider + approach ===
-    const beforeWrap = document.createElement("div");
-    beforeWrap.className = `${ANALYZER_PREFIX}section-wrap`;
-    beforeWrap.appendChild(createBadgeRow());
-    beforeWrap.appendChild(createCongrats(data.congratulations));
-    beforeWrap.appendChild(createDivider());
-    beforeWrap.appendChild(createApproachSection(data.approach));
+    // Build all three section wrappers
+    const approachWrap = document.createElement("div");
+    approachWrap.className = `${ANALYZER_PREFIX}section-wrap`;
+    approachWrap.appendChild(createBadgeRow(!!runtimeBlock));
+    approachWrap.appendChild(createCongrats(data.congratulations));
+    approachWrap.appendChild(createDivider());
+    approachWrap.appendChild(createApproachSection(data.approach));
 
-    if (runtimeBlock) {
-      wrapper.insertBefore(beforeWrap, runtimeBlock);
-    } else {
-      wrapper.appendChild(beforeWrap);
-    }
-
-    // === AFTER runtime block: efficiency ===
     const efficiencyWrap = document.createElement("div");
     efficiencyWrap.className = `${ANALYZER_PREFIX}section-wrap`;
     efficiencyWrap.appendChild(createEfficiencySection(data.efficiency));
 
-    if (runtimeBlock && runtimeBlock.nextSibling) {
-      wrapper.insertBefore(efficiencyWrap, runtimeBlock.nextSibling);
-    } else if (runtimeBlock) {
-      wrapper.appendChild(efficiencyWrap);
-    } else {
-      wrapper.appendChild(efficiencyWrap);
-    }
-
-    // === AFTER code block: code style ===
     const codeStyleWrap = document.createElement("div");
     codeStyleWrap.className = `${ANALYZER_PREFIX}section-wrap`;
     codeStyleWrap.appendChild(createCodeStyleSection(data.code_style));
 
-    if (codeBlock && codeBlock.nextSibling) {
-      wrapper.insertBefore(codeStyleWrap, codeBlock.nextSibling);
-    } else if (codeBlock) {
-      wrapper.appendChild(codeStyleWrap);
+    if (runtimeBlock) {
+      // ─── ACCEPTED: interleave with native sections ───
+      runtimeBlock.parentElement.insertBefore(approachWrap, runtimeBlock);
+      insertAfter(efficiencyWrap, runtimeBlock);
+
+      if (codeBlock) {
+        insertAfter(codeStyleWrap, codeBlock);
+      } else {
+        wrapper.appendChild(codeStyleWrap);
+      }
     } else {
-      wrapper.appendChild(codeStyleWrap);
+      // ─── FAILED: interleave around the code block ───
+      if (codeBlock) {
+        codeBlock.parentElement.insertBefore(approachWrap, codeBlock);
+        codeBlock.parentElement.insertBefore(efficiencyWrap, codeBlock);
+        insertAfter(codeStyleWrap, codeBlock);
+      } else {
+        // Last resort: append to wrapper
+        wrapper.appendChild(approachWrap);
+        wrapper.appendChild(efficiencyWrap);
+        wrapper.appendChild(codeStyleWrap);
+      }
+    }
+  }
+
+  function insertAfter(newNode, referenceNode) {
+    if (referenceNode.nextSibling) {
+      referenceNode.parentElement.insertBefore(
+        newNode,
+        referenceNode.nextSibling,
+      );
+    } else {
+      referenceNode.parentElement.appendChild(newNode);
     }
   }
 
   // ─── Section Builders ───
-  function createBadgeRow() {
+  function createBadgeRow(isAccepted) {
     const container = document.createElement("div");
     container.className = `${ANALYZER_PREFIX}badges`;
 
-    ["✓ Approach", "✓ Efficiency", "✓ Code Style"].forEach((label) => {
-      const badge = document.createElement("span");
-      badge.className = `${ANALYZER_PREFIX}badge`;
-      badge.textContent = label;
-      container.appendChild(badge);
-    });
+    const icon = isAccepted ? "✓" : "✗";
+    [`${icon} Approach`, `${icon} Efficiency`, `${icon} Code Style`].forEach(
+      (label) => {
+        const badge = document.createElement("span");
+        badge.className = `${ANALYZER_PREFIX}badge`;
+        badge.textContent = label;
+        container.appendChild(badge);
+      },
+    );
 
     return container;
   }
@@ -418,7 +450,7 @@
     const section = document.createElement("div");
     section.className = `${ANALYZER_PREFIX}section`;
 
-    section.appendChild(createHeading("🧑 Approach"));
+    section.appendChild(createHeading("Approach"));
     section.appendChild(
       createRow("Current:", createTags(approach.current_tags)),
     );
@@ -436,15 +468,15 @@
     const section = document.createElement("div");
     section.className = `${ANALYZER_PREFIX}section`;
 
-    section.appendChild(createHeading("⚡ Efficiency"));
+    section.appendChild(createHeading("Efficiency"));
 
     const currentComp = document.createElement("span");
     currentComp.className = `${ANALYZER_PREFIX}complexity ${ANALYZER_PREFIX}complexity-current`;
-    currentComp.textContent = efficiency.current_complexity;
+    currentComp.textContent = efficiency.current_complexity.toUpperCase();
 
     const suggestedComp = document.createElement("span");
     suggestedComp.className = `${ANALYZER_PREFIX}complexity ${ANALYZER_PREFIX}complexity-suggested`;
-    suggestedComp.textContent = efficiency.suggested_complexity;
+    suggestedComp.textContent = efficiency.suggested_complexity.toUpperCase();
 
     section.appendChild(createRow("Current complexity:", currentComp));
     section.appendChild(createRow("Suggested complexity:", suggestedComp));
@@ -459,7 +491,7 @@
     const section = document.createElement("div");
     section.className = `${ANALYZER_PREFIX}section`;
 
-    section.appendChild(createHeading("✂ Code Style"));
+    section.appendChild(createHeading("Code Style"));
     section.appendChild(
       createRow("Readability:", createStars(codeStyle.readability)),
     );
@@ -509,7 +541,7 @@
     tags.forEach((tag, i) => {
       const tagSpan = document.createElement("span");
       tagSpan.className = `${ANALYZER_PREFIX}tag`;
-      tagSpan.textContent = tag;
+      tagSpan.textContent = tag.replace(/\b\w/g, (c) => c.toUpperCase());
       container.appendChild(tagSpan);
 
       if (i < tags.length - 1) {
@@ -532,20 +564,31 @@
   }
 
   // ─── Start ───
+  console.log("[LC-Analyzer] Content script loaded on:", location.href);
   init();
 
-  // SPA navigation handler
-  let lastUrl = location.href;
-  const urlObserver = new MutationObserver(() => {
-    if (location.href !== lastUrl) {
-      lastUrl = location.href;
-      if (isSubmissionPage()) {
-        setTimeout(() => {
-          removeAnalysisSections();
-          init();
-        }, 2000);
-      }
+  // Persistent watcher — check every 1.5s if submission panel exists
+  setInterval(() => {
+    const isSub = isSubmissionPage();
+    const panel = getSubmissionPanel();
+    const btnExists = !!document.querySelector(`.${ANALYZER_PREFIX}btn`);
+
+    console.log("[LC-Analyzer] poll:", {
+      url: location.href,
+      isSub,
+      panelFound: !!panel,
+      btnExists,
+    });
+
+    if (!isSub) return;
+    if (!panel) return;
+
+    if (!btnExists) {
+      console.log("[LC-Analyzer] Injecting button...");
+      hideNativeAnalysis();
+      injectAnalysisButton();
     }
-  });
-  urlObserver.observe(document.body, { childList: true, subtree: true });
+
+    hideNativeAnalysis();
+  }, 1500);
 })();

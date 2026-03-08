@@ -1,8 +1,12 @@
 /* ============================================
    LeetCode Analyzer — Injected Styles
-   Purple accent (#a855f7) on dark (#1a1a2e)
+   Minimalist dark theme, blends with LeetCode
    All classes prefixed with lc-analyzer-
    ============================================ */
+
+[class^="lc-analyzer-"], [class*=" lc-analyzer-"] {
+  font-family: inherit;
+}
 
 /* ----- Badge Row ----- */
 .lc-analyzer-badges {
@@ -18,19 +22,19 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 14px;
-  border: 1.5px solid #a855f7;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px;
-  color: #a855f7;
-  font-size: 13px;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 500;
   background: transparent;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 /* ----- Congratulations ----- */
 .lc-analyzer-congrats {
-  color: #a855f7;
+  color: rgba(255, 255, 255, 0.5);
   font-style: italic;
   font-size: 13px;
   padding: 6px 16px 4px 16px;
@@ -40,17 +44,16 @@
 /* ----- Divider ----- */
 .lc-analyzer-divider {
   border: none;
-  border-top: 1px solid rgba(168, 85, 247, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin: 10px 16px;
 }
 
 /* ----- Section Wrapper (bordered card) ----- */
 .lc-analyzer-section-wrap {
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
   padding: 12px 4px;
   margin: 12px 0;
-  background: rgba(26, 26, 46, 0.5);
 }
 
 /* ----- Section Containers ----- */
@@ -60,9 +63,9 @@
 }
 
 .lc-analyzer-section-heading {
-  color: #a855f7;
-  font-size: 15px;
-  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  font-weight: 600;
   margin-bottom: 10px;
   letter-spacing: 0.2px;
 }
@@ -74,57 +77,56 @@
   gap: 8px;
   margin-bottom: 6px;
   font-size: 13px;
-  color: #d1d5db;
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.6;
 }
 
 .lc-analyzer-row-label {
-  color: #9ca3af;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
   white-space: nowrap;
   min-width: fit-content;
 }
 
 .lc-analyzer-row-value {
-  color: #d1d5db;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* Tags (links-style purple text separated by /) */
+/* Tags */
 .lc-analyzer-tag {
-  color: #a855f7;
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 500;
   cursor: default;
 }
 
 .lc-analyzer-tag-separator {
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.25);
   margin: 0 2px;
 }
 
 /* Complexity styling */
 .lc-analyzer-complexity {
-  font-weight: 700;
+  font-weight: 600;
   font-style: italic;
 }
 
 .lc-analyzer-complexity-current {
-  color: #d1d5db;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .lc-analyzer-complexity-suggested {
-  color: #a855f7;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Star rating */
 .lc-analyzer-stars {
-  font-size: 14px;
+  font-size: 13px;
   letter-spacing: 2px;
-  color: #a855f7;
 }
 
-/* Purple suggestion text */
+/* Suggestion text */
 .lc-analyzer-suggestion-purple {
-  color: #a855f7;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ----- Loading Spinner ----- */
@@ -132,7 +134,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #a855f7;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 13px;
   font-style: italic;
 }
@@ -140,26 +142,25 @@
 .lc-analyzer-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(168, 85, 247, 0.3);
-  border-top-color: #a855f7;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.6);
   border-radius: 50%;
   animation: lc-analyzer-spin 0.7s linear infinite;
 }
 
 @keyframes lc-analyzer-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 /* ----- Error Message ----- */
 .lc-analyzer-error {
-  color: #ef4444;
+  color: #f87171;
   font-size: 13px;
   padding: 8px 16px;
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(248, 113, 113, 0.06);
+  border: 1px solid rgba(248, 113, 113, 0.15);
   border-radius: 6px;
-  margin: 8px 16px;
+  margin: 8px 0;
 }
 
 /* ----- Analysis Button ----- */
@@ -167,31 +168,29 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 16px;
-  background: transparent;
-  border: 1.5px solid #a855f7;
-  border-radius: 6px;
-  color: #a855f7;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    color 0.2s;
+  transition: background 0.15s;
   margin-left: 8px;
   font-family: inherit;
 }
 
 .lc-analyzer-btn:hover {
-  background: rgba(168, 85, 247, 0.12);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .lc-analyzer-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .lc-analyzer-btn.lc-analyzer-btn-active {
-  background: #a855f7;
-  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.9);
 }
