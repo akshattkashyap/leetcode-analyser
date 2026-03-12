@@ -72,12 +72,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function performAnalysis() {
     retryBtn.style.display = "none";
     
-    // Query ALL tabs that match the LeetCode URL pattern, ignoring "active" state
-    // because clicking the side panel strips "active" state from the main window's tab
+    // Query ALL tabs that match the LeetCode URL pattern
     const tabs = await chrome.tabs.query({ url: "*://*.leetcode.com/problems/*" });
     
-    // Pick the first matching tab
-    const tab = tabs[0];
+    // Prioritize the active tab in its window, fallback to the first found
+    const tab = tabs.find(t => t.active) || tabs[0];
     
     if (!tab) {
       showStatus(analyzeStatus, "Please open a LeetCode problem page", "error");
@@ -218,6 +217,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           <span class="lc-row-label">Key Idea:</span>
           <span class="lc-row-value">${obj.key_idea}</span>
         </div>
+        ${obj.consider ? `
+        <div class="lc-row">
+          <span class="lc-row-label">Consider:</span>
+          <span class="lc-row-value">${obj.consider}</span>
+        </div>` : ""}
       `;
     });
 

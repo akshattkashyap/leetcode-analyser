@@ -37,7 +37,8 @@ async function handleAnalyzeCode({ problemTitle, language, code }) {
         "is_optimal": true,
         "current_tags": ["tag1", "tag2"],
         "suggested_tags": ["tag1", "tag2"],
-        "key_idea": "one sentence describing the core algorithmic idea used in the code"
+        "key_idea": "one sentence describing the core algorithmic idea used in the code",
+        "consider": "a thought-provoking question or suggestion (e.g. 'Have you considered Bidirectional Search to halve the space?')"
       },
       "efficiency": {
         "is_optimal": true,
