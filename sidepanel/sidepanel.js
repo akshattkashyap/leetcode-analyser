@@ -170,10 +170,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Badge row
     const badgeRow = document.createElement("div");
     badgeRow.className = "lc-badges";
-    ["✓ Approach", "✓ Efficiency", "✓ Code Style"].forEach(label => {
+    const badges = [
+      { label: "Approach", optimal: data.approach?.is_optimal },
+      { label: "Efficiency", optimal: data.efficiency?.is_optimal },
+      { label: "Code Style", optimal: data.code_style?.is_optimal },
+    ];
+
+    badges.forEach(bData => {
+      const isOptimal = bData.optimal !== false; // Default to true if missing
+      const icon = isOptimal ? "✓" : "🚫";
+      
       const b = document.createElement("span");
       b.className = "lc-badge";
-      b.textContent = label;
+      b.textContent = `${icon} ${bData.label}`;
+      
+      if (!isOptimal) {
+        b.style.borderColor = "rgba(248, 113, 113, 0.4)"; // Red warning border
+        b.style.color = "#f87171";
+      }
+      
       badgeRow.appendChild(b);
     });
     wrapper.appendChild(badgeRow);

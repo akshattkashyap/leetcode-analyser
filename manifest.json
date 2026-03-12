@@ -12,7 +12,6 @@
     {
       "matches": ["https://leetcode.com/problems/*"],
       "js": ["content.js"],
-      "css": ["sidepanel/sidepanel.css"],
       "run_at": "document_idle"
     }
   ],

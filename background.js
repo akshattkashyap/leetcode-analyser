@@ -34,16 +34,19 @@ async function handleAnalyzeCode({ problemTitle, language, code }) {
     {
       "congratulations": "short personalized encouragement (1 sentence, varies based on code quality)",
       "approach": {
+        "is_optimal": true,
         "current_tags": ["tag1", "tag2"],
         "suggested_tags": ["tag1", "tag2"],
         "key_idea": "one sentence describing the core algorithmic idea used in the code"
       },
       "efficiency": {
+        "is_optimal": true,
         "current_complexity": "O(...)",
         "suggested_complexity": "O(...)",
         "suggestion": "2-3 sentences on whether the approach is optimal for time and space"
       },
       "code_style": {
+        "is_optimal": false,
         "readability": 2,
         "structure": 3,
         "suggestion": "one sentence of specific actionable improvement"
