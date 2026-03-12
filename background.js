@@ -1,5 +1,9 @@
 // background.js — Service worker for Groq API calls
 
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((error) => console.error(error));
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "analyzeCode") {
     handleAnalyzeCode(request.data)
@@ -64,8 +68,23 @@ async function handleAnalyzeCode({ problemTitle, language, code }) {
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Groq API error (${response.status}): ${errorText}`);
+    let errorMsg = `Groq API error (${response.status})`;
+    try {
+      const errorJson = await response.json();
+      if (errorJson.error && errorJson.error.message) {
+        if (errorJson.error.code === "invalid_api_key") {
+          errorMsg = "Invalid API Key. Please click the gear icon to update it.";
+        } else {
+          errorMsg = errorJson.error.message;
+        }
+      } else {
+        errorMsg += `: ${JSON.stringify(errorJson)}`;
+      }
+    } catch {
+      // If reading json fails, we can't do much, just throw generic
+      errorMsg += " - Unknown error occurred.";
+    }
+    throw new Error(errorMsg);
   }
 
   const data = await response.json();

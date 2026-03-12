@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeetCode Analyzer</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span class="header-icon">✦</span>
+      <div>
+        <h1>LeetCode Analyzer</h1>
+        <p>AI-powered submission analysis</p>
+      </div>
+    </div>
+    <button id="settings-toggle" class="icon-btn" title="Settings" style="display: none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div id="settings-section">
+    <label for="api-key">Groq API Key</label>
+    <div class="input-wrap">
+      <input type="password" id="api-key" placeholder="gsk_..." />
+      <button class="toggle-btn" id="toggle-visibility" title="Show / Hide">👁</button>
+    </div>
+    <button class="primary-btn" id="save-key-btn">Save Key</button>
+    <div class="status" id="settings-status"></div>
+  </div>
+
+  <div id="analyze-section" style="display: none;">
+    <div class="status" id="analyze-status"></div>
+    <button class="primary-btn" id="retry-btn" style="display: none; margin-top: 12px;">Retry Analysis</button>
+  </div>
+
+  <div id="results-container" style="display: none;">
+    <!-- Results dynamically injected here -->
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

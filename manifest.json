@@ -3,7 +3,7 @@
   "name": "LeetCode Analyzer",
   "version": "1.0.0",
   "description": "AI-powered analysis for LeetCode submissions using Groq API",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "sidePanel", "scripting", "tabs"],
   "host_permissions": ["https://api.groq.com/*"],
   "background": {
     "service_worker": "background.js"
@@ -12,12 +12,15 @@
     {
       "matches": ["https://leetcode.com/problems/*"],
       "js": ["content.js"],
-      "css": ["styles.css"],
+      "css": ["sidepanel/sidepanel.css"],
       "run_at": "document_idle"
     }
   ],
+  "side_panel": {
+    "default_path": "sidepanel/sidepanel.html"
+  },
   "action": {
-    "default_popup": "popup/popup.html",
+    "default_title": "Open LeetCode Analyzer",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

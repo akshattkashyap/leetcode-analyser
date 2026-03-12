@@ -1,0 +1,240 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #1e1e1e;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+
+.icon-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.header-icon {
+  font-size: 20px;
+}
+
+.header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.header p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 2px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+}
+
+.input-wrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+input[type="text"],
+input[type="password"] {
+  flex: 1;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.toggle-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0 12px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.primary-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  margin-top: 12px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.status.success { color: rgba(255, 255, 255, 0.6); }
+.status.error { color: #f87171; }
+.status.loading { color: rgba(255, 255, 255, 0.6); font-style: italic; }
+
+/* Generated Results Styles */
+#results-container {
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+}
+
+.lc-section-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.lc-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.lc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.lc-congrats {
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.lc-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 16px 0;
+}
+
+.lc-section-heading {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.lc-row {
+  display: grid;
+  grid-template-columns: 85px 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.lc-row-label {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+}
+
+.lc-row-value {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.lc-tag {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.lc-tag-separator {
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0 4px;
+}
+
+.lc-complexity {
+  font-weight: 600;
+  font-style: italic;
+}
+
+.lc-complexity-current {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.lc-complexity-suggested {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.lc-stars {
+  font-size: 14px;
+  letter-spacing: 2px;
+}
