@@ -104,21 +104,3 @@ leetcode-analyser/
 | `scripting` | Injecting the content script when needed |
 | `tabs` | Querying open LeetCode tabs to find the active one |
 | `host_permissions` (`api.groq.com`) | Making API calls to Groq |
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/my-feature`)
-3. Commit your changes (`git commit -m 'Add my feature'`)
-4. Push to the branch (`git push origin feat/my-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is open source. See the repository for license details.
